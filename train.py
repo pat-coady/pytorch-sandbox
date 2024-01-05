@@ -3,14 +3,13 @@
 
 import hydra
 import lightning as L
-import wandb
-
 from lightning.pytorch.callbacks import Callback, ModelCheckpoint
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from lightning.pytorch.loggers import TensorBoardLogger, WandbLogger
 from lightning.pytorch.utilities.model_summary.model_summary import ModelSummary
 from omegaconf import OmegaConf
 
+import wandb
 from data import MNISTDataModule
 from models import LitCNN
 
@@ -41,7 +40,7 @@ class HPMetricCallback(Callback):
 @hydra.main(version_base=None, config_path='conf', config_name='config')
 def main(cfg):
     """Training and model evaluation."""
-    wandb.init(reinit=True)  # needed with hydra multirun
+    wandb.init('mnist', reinit=True)  # needed with hydra multirun
     print(OmegaConf.to_yaml(cfg))
     cnn = LitCNN(cfg.model)
     mnist_data = MNISTDataModule(cfg.data)
