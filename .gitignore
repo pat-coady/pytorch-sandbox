@@ -1,0 +1,10 @@
+wandb
+tb_logs
+multirun
+data
+.Trash-1000
+.ruff_cache
+.mypy_cache
+.ipynb_checkpoints
+__pycache__
+.DS_Store

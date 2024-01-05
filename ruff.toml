@@ -1,0 +1,25 @@
+[lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # pydocstyle
+    "D",
+    # pycodestyle
+    "E",
+]
+ignore = [
+    # docstring for __init__()
+    "D107",
+    "D102",
+]
+pycodestyle.max-line-length = 100

@@ -1,0 +1,13 @@
+numpy
+matplotlib
+jupyterlab
+torch
+torchvision
+pandas
+scikit-learn
+torchsummary
+tensorboard
+wandb
+lightning
+hydra-core
+omegaconf
