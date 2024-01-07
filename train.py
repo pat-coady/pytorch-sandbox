@@ -47,7 +47,7 @@ def main(cfg):
     tb_logger = TensorBoardLogger(save_dir="logs/tb_logs", name='', log_graph=True,
                                   default_hp_metric=False)  # don't log hpparams without metric
     wandb_logger = WandbLogger()
-    early_stop_callback = EarlyStopping(monitor="val_loss", min_delta=0.00,
+    early_stop_callback = EarlyStopping(monitor="val_loss", min_delta=0.01,
                                         patience=3, verbose=True, mode="min")
     checkpoint_callback = ModelCheckpoint(save_top_k=2, monitor="val_loss",
                                           dirpath='logs/checkpoints')
