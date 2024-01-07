@@ -1,7 +1,7 @@
-wandb
-tb_logs
+logs
 multirun
 data
+notebooks
 .Trash-1000
 .ruff_cache
 .mypy_cache
