@@ -61,10 +61,18 @@ class LitCNN(L.LightningModule):
         return self.model(x)
   
     @staticmethod
-    def tb_hook(writer, step):
+    def tb_hook(logger, step):
         """Tensorboard activation histogram hook."""
         def hook(module, input, output):
-            writer.add_histogram('act/' + str(module.name), output, global_step=step)
+            logger.add_histogram('act/' + str(module.name), output, global_step=step)
+
+        return hook
+    
+    @staticmethod
+    def wandb_hook(logger, step):
+        """Weights and Biases activation histogram hook."""
+        def hook(module, input, output):
+            logger.log({'act/' + str(module.name): output}, step=step)
 
         return hook
 
@@ -85,10 +93,13 @@ class LitCNN(L.LightningModule):
                 if t.grad is not None:
                     tb_logger.add_histogram("grad/" + n, t.grad.detach(),
                                             global_step=self.global_step)
-                    wandb_logger.log({"param/" + n: wandb.Histogram(t.grad.detach())},
+                    wandb_logger.log({"grad/" + n: wandb.Histogram(t.grad.detach())},
                                      step=self.global_step)
             with torch.nn.modules.module.register_module_forward_hook(
                 LitCNN.tb_hook(tb_logger, self.global_step)):
+                self(x)  # run forward pass on current batch with fwd hook enabled
+            with torch.nn.modules.module.register_module_forward_hook(
+                LitCNN.wandb_hook(wandb_logger, self.global_step)):
                 self(x)  # run forward pass on current batch with fwd hook enabled
         return loss
 

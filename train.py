@@ -43,8 +43,8 @@ def main(cfg):
     mnist_data = MNISTDataModule(cfg.data)
     print(ModelSummary(cnn, max_depth=-1))
     wandb.init(project='mnist', config=flatten(cfg),
-               dir='logs', config_exclude_keys=['cfg'])
-    tb_logger = TensorBoardLogger("logs/tb_logs", log_graph=True,
+               dir='logs')
+    tb_logger = TensorBoardLogger(save_dir="logs/tb_logs", name='', log_graph=True,
                                   default_hp_metric=False)  # don't log hpparams without metric
     wandb_logger = WandbLogger()
     early_stop_callback = EarlyStopping(monitor="val_loss", min_delta=0.00,
