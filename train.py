@@ -3,13 +3,13 @@
 
 import hydra
 import lightning as L
+import wandb
 from lightning.pytorch.callbacks import Callback, ModelCheckpoint
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from lightning.pytorch.loggers import TensorBoardLogger, WandbLogger
 from lightning.pytorch.utilities.model_summary.model_summary import ModelSummary
 from omegaconf import OmegaConf
 
-import wandb
 from data import MNISTDataModule
 from models import LitCNN
 
@@ -17,6 +17,7 @@ from models import LitCNN
 def flatten(d):
     """Flatten nested dictionary - assumes no duplicate keys."""
     items = []
+    # TODO: warn on duplicate keys
     for k, v in d.items():
         if isinstance(v, (int, float, str, bool)):
             items.append((k, v))
@@ -30,10 +31,8 @@ class HPMetricCallback(Callback):
 
     def on_train_end(self, trainer, pl_module):
         tb_logger = pl_module.loggers[0]
-        # wandb_logger = pl_module.loggers[1]
         hp_params = flatten(pl_module.cfg)
         tb_logger.log_hyperparams(hp_params, trainer.logged_metrics)
-        # wandb_logger.experiment.config.update(hp_params)
 
 
 @hydra.main(version_base=None, config_path='conf', config_name='config')
@@ -44,7 +43,7 @@ def main(cfg):
     mnist_data = MNISTDataModule(cfg.data)
     print(ModelSummary(cnn, max_depth=-1))
     wandb.init(project='mnist', config=flatten(cfg),
-               dir='logs')
+               dir='logs', config_exclude_keys=['cfg'])
     tb_logger = TensorBoardLogger("logs/tb_logs", log_graph=True,
                                   default_hp_metric=False)  # don't log hpparams without metric
     wandb_logger = WandbLogger()

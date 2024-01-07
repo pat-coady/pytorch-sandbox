@@ -5,9 +5,8 @@ from collections import OrderedDict
 import lightning as L
 import torch
 import torch.nn.functional as F
-from torch import nn
-
 import wandb
+from torch import nn
 
 # undocumented public methods ok - nn.Module and L.Lightning methods don't need explanation
 # ruff: noqa: D102
