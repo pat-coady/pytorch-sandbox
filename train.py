@@ -32,7 +32,10 @@ class HPMetricCallback(Callback):
     def on_train_end(self, trainer, pl_module):
         tb_logger = pl_module.loggers[0]
         hp_params = flatten(pl_module.cfg)
-        tb_logger.log_hyperparams(hp_params, trainer.logged_metrics)
+        metrics = {}
+        for k, v in trainer.logged_metrics.items():
+            metrics['metric/' + k] = v.item()
+        tb_logger.log_hyperparams(hp_params, metrics)
 
 
 @hydra.main(version_base=None, config_path='conf', config_name='config')
@@ -42,11 +45,12 @@ def main(cfg):
     cnn = LitCNN(cfg.model)
     mnist_data = MNISTDataModule(cfg.data)
     print(ModelSummary(cnn, max_depth=-1))
-    # wandb.init(project='mnist', config=flatten(cfg),
-    #            dir='logs')
+    wandb.init(project='mnist', config=flatten(cfg),
+               dir='logs')
     tb_logger = TensorBoardLogger(save_dir="logs/tb", name='', log_graph=True,
                                   default_hp_metric=False)  # don't log hpparams without metric
-    wandb_logger = WandbLogger(save_dir='logs')
+    # tb_logger = TensorBoardLogger(save_dir="logs/tb", name='', log_graph=True)
+    wandb_logger = WandbLogger()
     wandb_logger.experiment.config.update(flatten(cfg))
     early_stop_callback = EarlyStopping(monitor="val_loss", min_delta=0.01,
                                         patience=3, verbose=True, mode="min")
@@ -56,7 +60,8 @@ def main(cfg):
     trainer = L.Trainer(**cfg.trainer, logger=[tb_logger, wandb_logger],
                         callbacks=[early_stop_callback, checkpoint_callback, hp_metric_callback])
     trainer.fit(cnn, mnist_data)
-    wandb_logger.finalize('success')
+    # wandb_logger.finalize('success')
+    wandb.finish()
     tb_logger.finalize('success')
 
 if __name__ == "__main__":
