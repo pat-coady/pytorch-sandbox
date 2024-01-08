@@ -42,11 +42,12 @@ def main(cfg):
     cnn = LitCNN(cfg.model)
     mnist_data = MNISTDataModule(cfg.data)
     print(ModelSummary(cnn, max_depth=-1))
-    wandb.init(project='mnist', config=flatten(cfg),
-               dir='logs')
-    tb_logger = TensorBoardLogger(save_dir="logs/tb_logs", name='', log_graph=True,
+    # wandb.init(project='mnist', config=flatten(cfg),
+    #            dir='logs')
+    tb_logger = TensorBoardLogger(save_dir="logs/tb", name='', log_graph=True,
                                   default_hp_metric=False)  # don't log hpparams without metric
-    wandb_logger = WandbLogger()
+    wandb_logger = WandbLogger(save_dir='logs')
+    wandb_logger.experiment.config.update(flatten(cfg))
     early_stop_callback = EarlyStopping(monitor="val_loss", min_delta=0.01,
                                         patience=3, verbose=True, mode="min")
     checkpoint_callback = ModelCheckpoint(save_top_k=2, monitor="val_loss",
@@ -55,8 +56,8 @@ def main(cfg):
     trainer = L.Trainer(**cfg.trainer, logger=[tb_logger, wandb_logger],
                         callbacks=[early_stop_callback, checkpoint_callback, hp_metric_callback])
     trainer.fit(cnn, mnist_data)
-    wandb.finish()
-
+    wandb_logger.finalize('success')
+    tb_logger.finalize('success')
 
 if __name__ == "__main__":
     main()
