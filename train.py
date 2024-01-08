@@ -49,7 +49,6 @@ def main(cfg):
                dir='logs')
     tb_logger = TensorBoardLogger(save_dir="logs/tb", name='', log_graph=True,
                                   default_hp_metric=False)  # don't log hpparams without metric
-    # tb_logger = TensorBoardLogger(save_dir="logs/tb", name='', log_graph=True)
     wandb_logger = WandbLogger()
     wandb_logger.experiment.config.update(flatten(cfg))
     early_stop_callback = EarlyStopping(monitor="val_loss", min_delta=0.01,
@@ -60,7 +59,6 @@ def main(cfg):
     trainer = L.Trainer(**cfg.trainer, logger=[tb_logger, wandb_logger],
                         callbacks=[early_stop_callback, checkpoint_callback, hp_metric_callback])
     trainer.fit(cnn, mnist_data)
-    # wandb_logger.finalize('success')
     wandb.finish()
     tb_logger.finalize('success')
 
