@@ -5,6 +5,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends python3.10 python3-pip
 
-COPY requirements.txt /tmp/requirements.txt
+WORKDIR /app
 
-RUN pip install -r /tmp/requirements.txt
+COPY . .
+
+RUN pip install -r requirements.txt

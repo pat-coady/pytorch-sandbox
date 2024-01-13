@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import wandb
 from torch import nn
 
-# undocumented public methods ok - nn.Module and L.Lightning methods don't need explanation
+# undocumented public methods ok: nn.Module and L.Lightning methods don't need explanation
 # ruff: noqa: D102
 
 class CNN(nn.Module):
@@ -17,6 +17,7 @@ class CNN(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         self.cfg = cfg
+        # OrderedDict (vs. List) used to give each layer meaningful name
         self.cnn_stack = nn.Sequential(OrderedDict([
             ('conv1', nn.Conv2d(in_channels=1, out_channels=cfg.l1_chan,
                                 kernel_size=(3, 3), stride=2, padding='valid')),
@@ -50,9 +51,9 @@ class LitCNN(L.LightningModule):
         super().__init__()
         self.cfg = cfg
         self.model = CNN(cfg)
-        # used by ModelSummary to track tensor dimensions through network
+        # used by ModelSummary to track tensor dimensions through model
         self.example_input_array = torch.Tensor(32, 1, 28, 28)
-        # give names to each layer in network for activation forward hook
+        # give name to each layer in network for logging acts, params, & grads
         for name, module in self.named_modules():
             module.name = name
         self.save_hyperparameters()
@@ -81,11 +82,11 @@ class LitCNN(L.LightningModule):
         logits = self(x)  # calls forward
         loss = F.cross_entropy(logits, y)
         self.log("train/loss", loss, prog_bar=True)
+        num_correct = (logits.detach().argmax(dim=1) == y).sum().type(torch.float).item()
+        self.log("train/acc", num_correct/len(y))
         if self.global_step % 250 == 0:
             tb_logger = self.loggers[0].experiment
             wandb_logger = self.loggers[1].experiment
-            num_correct = (logits.detach().argmax(dim=1) == y).sum().type(torch.float).item()
-            self.log("train/acc", num_correct/len(y))
             # log weights and gradients
             for n, t in self.named_parameters():
                 tb_logger.add_histogram("param/" + n, t.detach(), global_step=self.global_step)
@@ -97,10 +98,10 @@ class LitCNN(L.LightningModule):
                                      step=self.global_step)
             with torch.nn.modules.module.register_module_forward_hook(
                 LitCNN.tb_hook(tb_logger, self.global_step)):
-                self(x)  # run forward pass on current batch with fwd hook enabled
+                self(x)  # run forward pass on current batch to log activations
             with torch.nn.modules.module.register_module_forward_hook(
                 LitCNN.wandb_hook(wandb_logger, self.global_step)):
-                self(x)  # run forward pass on current batch with fwd hook enabled
+                self(x)  # run forward pass on current batch to log activations
         return loss
 
     def validation_step(self, batch, batch_idx, dataloader_idx=0):

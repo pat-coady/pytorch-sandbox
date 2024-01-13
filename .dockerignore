@@ -1,11 +1,10 @@
-logs
-multirun
 data
 notebooks
 outputs
-.Trash-1000
-.ruff_cache
+logs
+multirun
 .mypy_cache
+.ruff_cache
+.Trash-1000
 .ipynb_checkpoints
 __pycache__
-.DS_Store
