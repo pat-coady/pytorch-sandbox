@@ -3,9 +3,9 @@ multirun
 data
 notebooks
 outputs
+__pycache__
 .Trash-1000
 .ruff_cache
 .mypy_cache
 .ipynb_checkpoints
-__pycache__
 .DS_Store
