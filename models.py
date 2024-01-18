@@ -89,12 +89,12 @@ class LitCNN(L.LightningModule):
             wandb_logger = self.loggers[1].experiment
             # log weights and gradients
             for n, t in self.named_parameters():
-                tb_logger.add_histogram("param/" + n, t.detach(), global_step=self.global_step)
-                wandb_logger.log({"param/" + n: wandb.Histogram(t.detach())}, step=self.global_step)
+                tb_logger.add_histogram("param/" + n, t.detach().cpu(), global_step=self.global_step)
+                wandb_logger.log({"param/" + n: wandb.Histogram(t.detach().cpu())}, step=self.global_step)
                 if t.grad is not None:
-                    tb_logger.add_histogram("grad/" + n, t.grad.detach(),
+                    tb_logger.add_histogram("grad/" + n, t.grad.detach().cpu(),
                                             global_step=self.global_step)
-                    wandb_logger.log({"grad/" + n: wandb.Histogram(t.grad.detach())},
+                    wandb_logger.log({"grad/" + n: wandb.Histogram(t.grad.detach().cpu())},
                                      step=self.global_step)
             with torch.nn.modules.module.register_module_forward_hook(
                 LitCNN.tb_hook(tb_logger, self.global_step)):
