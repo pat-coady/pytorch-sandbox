@@ -45,6 +45,11 @@ def main(cfg):
     cnn = LitCNN(cfg.model)
     mnist_data = MNISTDataModule(cfg.data)
     print(ModelSummary(cnn, max_depth=-1))
+    import os
+
+    p = 'logs'
+    if not os.path.exists(p):
+        os.makedirs(p)
     wandb.init(project='mnist', config=flatten(cfg),
                dir='logs')
     tb_logger = TensorBoardLogger(save_dir="logs/tb", name='', log_graph=True,
