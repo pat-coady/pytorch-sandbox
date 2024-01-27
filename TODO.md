@@ -3,3 +3,4 @@ Directory structure to easily replicate experiments
 Integrate sweeping: run all yamls in experiment directory
 wandb API key (environment variable? pass through docker run?)
 keep training code out of container
+open port to tensorboard on GCP VM
