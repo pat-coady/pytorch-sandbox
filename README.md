@@ -1,8 +1,8 @@
 # PyTorch + Lightning + W&B + TensorBoard Reference Implementation
 
-It is finally time for me to jump in the PyTorch pool. My office was closed for 2 weeks over the 2023/2024 holidays, so this was a perfect time to learn some new (to me) tools.
+It is finally time for me to jump in the PyTorch pool. My office was closed for two weeks over the 2023/2024 holidays, so this was a perfect time to learn some new (to me) tools.
 
-The key objective was to build a reference training implementation for a simple CNN for MNIST. From here, the plan is to implement more interesting things after getting the rust knocked off:
+The key objective was to build a reference  implementation for a simple CNN for MNIST. From here, the plan is to implement more interesting things after getting the rust knocked off:
 
 - Diffusion models
 - Very small GPT-like model (e.g., nanoGPT)
@@ -18,7 +18,7 @@ A few updated approaches since last time I got my hands dirty:
 - Weights & Biases : See what a slick experiment tracking tool can do
 - TensorBoard : Still seems the go-to for basic training montoring
 - Dev Containers : Move from PyCharm to VS Code and give dev containers a try
-- TODO: Add type hinting to make code less readable
+- TODO: Add type hinting to make my code less readable
 
 ## Setup
 
@@ -47,17 +47,17 @@ Put your Weights & Biases API Key in your environment.
 
 `export WANDB_API_KEY=<your API key>`
 
-Run the container detached, we'll connect using `docker exec` to start training and tensorboard.
+Run the container detached. We'll connect to the container in the next step using `docker exec` to start training and tensorboard. Yes, I know, containers aren't really meant to be used interactively like this. But it is pretty handy for having a fixed development environment and replicating almost anywhere.
 
 `docker run --gpus all -p 6006:6006 -e WANDB_API_KEY -td mnist0`
 
 4. Train a model and monitor results via TensorBoard
 
-Start tmux so you can do train and start TensorBoard server. Also easy way to prvent you job from dying if you disconnect your ssh session.
+Start `tmux` so you can launch training and start TensorBoard server. Also easy way to prevent your job from dying if you disconnect your ssh session (which can happen **very** easily if your computer goes to sleep or your network glitches).
 
 `tmux`
 
-Then launch training, here is a sweep using they hydra interace:
+Here is an example hyperparameter sweep using the hydra interace:
 
 ```
 cd pytorch-sandbox
@@ -68,13 +68,24 @@ model.optimizer_params.lr=0.02,0.1 model.optimizer_params.momentum=0.8,0.9 \
 model.optimizer_params.nesterov=0,1
 ```
 
-Start another pane in `tmux` to launch tensorboard: `C-b c`. Here is a nice tmux tutorial if you aren't familar.
+Start another pane in `tmux` to launch tensorboard and monitor training: `CNTL-b c`. Here is a nice [tmux tutorial](https://hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/) if you aren't familar.
 
 Launch tensorboard (`--bind_all` to serve externally):
 
-`tensorboard --logdir . --bind_all`
+`tensorboard --bind_all --logdir .`
 
-You can detach from 
+To detach from tmux: `CNTL-b d`. You can now walk away from things, close ssh, and everything should keep on running.
+
+## Results
+
+I've made the Weights and Biases workspace for this project if you want to look around:
+
+https://wandb.ai/pcoady00/mnist/workspace
+
+This contains the results of the 64-run hyperparameter sweep I ran above. Here are some screen shots. Here is a [quick (not narrated) video](https://youtu.be/CWLoKN_3Cz0) that explores results.
+
+And here some representative screen shots.
+
 
 
 ## Acknowledgements
