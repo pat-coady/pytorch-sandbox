@@ -87,18 +87,25 @@ This contains the results of the 64-run hyperparameter sweep I ran above. Here a
 And here some representative screen shots.
 
 ![run summary](assets/WandB_run_summary.png)
+**Figure 1.** *Results sorted by validation accuracy.*
 
 ![validation loss](assets/WandB_val_loss.png)
+**Figure 2.** *Training curves: validation loss.*
 
 ![parameter importance](assets/WandB_param_importance.png)
+**Figure 3.** *Parameter importance and positive (GREEN) or negative (RED) correlation.*
 
 ![parallel coordinates](assets/WandB_parallel_coord.png)
+**Figure 4.** *"Parallel Coordinates" view, somewhat useful when used interactive -- see video.*
 
 ![parameter histograms](assets/WandB_params.png)
+**Figure 5.** *Parmeter histograms, can be somewhat informative to debug training and where learning is occuring.*
 
 ![activation histograms](assets/WandB_activations.png)
+**Figure 6.** *Also useful for monitoring training.*
 
 ![gradient histograms](assets/WandB_gradients.png)
+**Figure 7.** *Good to check ... for instance, would gradient clipping or batch normalization be useful?*
 
 ## Acknowledgements
 
