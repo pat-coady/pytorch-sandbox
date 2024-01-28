@@ -86,7 +86,19 @@ This contains the results of the 64-run hyperparameter sweep I ran above. Here a
 
 And here some representative screen shots.
 
+![run summary](assets/WandB_run_summary.png)
 
+![validation loss](assets/WandB_val_loss.png)
+
+![parameter importance](assets/WandB_param_importance.png)
+
+![parallel coordinates](assets/WandB_parallel_coord.png)
+
+![parameter histograms](assets/WandB_params.png)
+
+![activation histograms](assets/WandB_activations.png)
+
+![gradient histograms](assets/WandB_gradients.png)
 
 ## Acknowledgements
 
